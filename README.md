@@ -13,14 +13,13 @@ This project is going to collect weather data from a public API, clean it, and s
         - load.py
     - pipeline.py
     - config.py
-    - requirments.txt
 
 ## Schema Design
 Weather stations and daily observations.
 
 ### Tables
-- Station: id, name, latitude, longitude
-- WeatherRecord: id, station-id, date, temp_high, temo_low, precipitation
+- Station: id, name
+- WeatherRecord: station-id, date, temp_high, temp_low, precipitation
 
 ### Relationships
 - One station -> many weather records
