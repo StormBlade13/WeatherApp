@@ -1,30 +1,47 @@
 import requests
 import json
 
-#Define a unique user-agent
-headers = {"User-Agent": "WeatherAppProject"}
+#A client for pulling historical weather data from NCEI's Climate Data Online API.
+class NCEIClient:
 
-#Lookup grid endpoints via lat/lon
-point_url = "https://api.weather.gov/points/39.0997,-94.5786"
-point_response = requests.get(point_url, headers = headers)
+    #Base URL
+    URL = "https://www.ncei.noaa.gov/cdo-web/api/v2/data"
 
-if point_response.status_code == 200:
-    print("Success")
-else:
-    print(f"Point lookup failed: {point_response.status_code}")
-    exit()
+    def __init__(self):
+        self.headers = {
+            "token": "eFFEGOrfOnyNMTTvkclvbTIFFqkKlIGR",
+            "User-Agent": "WeatherAppProject"
+            }
+        
+    #Fetch a block of data from NCEI
+    def fetch(self, start_date: str, end_date: str):
 
-point_json = point_response.json()
+        #API parameters
+        parameters = {
+            "datasetid": "GHCND",
+            "stationid": "GHCND:USW00003947",
+            "startdate": start_date,
+            "enddate": end_date,
+            "limit": 1000}
 
-#Extract the exact forecast endpoint and call it
-forcast_url = point_json["properties"]["forecast"]
-forcast_response = requests.get(forcast_url, headers = headers)
+        #API response
+        response = requests.get(self.URL, headers = self.headers, params = parameters)
 
-if forcast_response.status_code == 200:
-    forecast_data = forcast_response.json()
-    print("Forecast success")
-else:
-    print(f"Forecast Failed: {forcast_response.status_code}")
+        #API error check
+        if response.status_code == 200:
+            print("Success")
+        else:
+            print(f"station lookup failed: {response.status_code}")
+            exit()
 
-with open("data_raw//raw_data.json", "w") as f:
-    json.dump(forecast_data, f, indent = 4)
+        #Converts response to json
+        data = response.json()
+
+        return data
+
+    #Saves raw json data
+    def save(self, data):
+
+        #Writes json to raw_data file
+        with open("data_raw//raw_data.json", "w") as f:
+            json.dump(data, f, indent = 4)
