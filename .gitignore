@@ -4,3 +4,4 @@ etl/__pycache__
 /.idea
 /.venv
 /db
+__pycache__
