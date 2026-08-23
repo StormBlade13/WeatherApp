@@ -3,3 +3,4 @@
 etl/__pycache__
 /.idea
 /.venv
+/db
