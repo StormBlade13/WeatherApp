@@ -7,7 +7,7 @@ This project is going to collect weather data from a public API, clean it, and s
     - data_clean/
     - db/
     - models/
-    - etl/
+    - elt/
         - extract.py
         - transform.py
         - load.py
