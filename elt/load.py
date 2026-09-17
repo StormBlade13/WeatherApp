@@ -53,6 +53,7 @@ class WeatherTable(Base):
 
 Base.metadata.create_all(engine)
 
+#Read raw data into memory
 def readFilter() -> list:
 
     with open("data_raw//raw_data.json", "r") as f:
@@ -61,25 +62,27 @@ def readFilter() -> list:
     data = data["results"]
     return data
 
-
+#Converts 1/10th celsius into fehrenheit
 def nceiTempToF(data):
     celsius = data / 10
     fahrenheit = celsius * 9/5 + 32
     return fahrenheit
 
-
+#Collapses original format into a single row per date
 def collapseAllData(data):
     grouped = {}
 
-
+    #Iterate through each item
     for item in data:
         date = item["date"]
         dtype = item["datatype"]
         value = item["value"]
 
+        #Only stores selected data types
         if dtype not in KEEP:
             continue
 
+        #Creates new row if date is not already used
         if date not in grouped:
             grouped[date] = {
                 "stationID": "GHCND:USW00003947",
@@ -89,6 +92,7 @@ def collapseAllData(data):
                 "prcp": None
             }
 
+        #Assigns data to coresponding dictionary key
         if dtype == "TMAX":
             grouped[date]["tmax"] = nceiTempToF(value)
         elif dtype == "TMIN":
@@ -96,8 +100,10 @@ def collapseAllData(data):
         elif dtype == "PRCP":
             grouped[date]["prcp"] = value
 
+    #Returns dictionary values as a list
     return list(grouped.values())
 
+#Inserts data into database
 def insert(data):
 
     session = Session()
@@ -105,6 +111,4 @@ def insert(data):
     session.bulk_insert_mappings(WeatherTable, records)
     session.commit()
 
-data = readFilter()
-insert(data)
 
