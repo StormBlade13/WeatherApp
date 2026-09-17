@@ -41,9 +41,9 @@ class WeatherTable(Base):
     #Columns
     stationID = sa.Column(sa.String, sa.ForeignKey("Station.stationID"))
     date = sa.Column(sa.Date)
-    tmax = sa.Column(sa.Integer)
-    tmin = sa.Column(sa.Integer)
-    prcp = sa.Column(sa.Integer)
+    tmax = sa.Column(sa.Double)
+    tmin = sa.Column(sa.Double)
+    prcp = sa.Column(sa.Double)
 
     __table_args__ = (
         sa.PrimaryKeyConstraint("stationID", "date"),
@@ -65,7 +65,7 @@ def readFilter() -> list:
 #Converts 1/10th celsius into fehrenheit
 def nceiTempToF(data):
     celsius = data / 10
-    fahrenheit = celsius * 9/5 + 32
+    fahrenheit = (celsius * 9/5) + 32
     return fahrenheit
 
 #Collapses original format into a single row per date
